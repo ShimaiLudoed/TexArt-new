@@ -7,16 +7,29 @@ public class Bullet : MonoBehaviour, IPoolable
 {
     [SerializeField] private float speed;
     [SerializeField] private float lifeTime;
-    public event Action<Bullet> onBulletDisable;
+    private float _curTime;
+    public event Action<IPoolable> OnBulletDisable;
+
+    private void Start()
+    {
+        _curTime = lifeTime;
+    }
 
     private void Update()
     {
+        transform.position = Vector3.forward * (speed * Time.deltaTime);
         
+        if (_curTime <= 0)
+        {
+            Disable();
+        }
+        else
+        {
+            _curTime -= Time.deltaTime;
+        }
     }
-    //TODO Bullet movement
-    //TODO Bullet LifeTime
-    private void OnDisable()
+    private  void Disable()
     {
-        onBulletDisable?.Invoke(this);
+        OnBulletDisable?.Invoke(this);
     }
 }
